@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>订单查询 - 玩偶商城</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #fce4ec 0%, #e8eaf6 50%, #e0f7fa 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  .container {
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+    padding: 40px 32px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+  }
+  .logo { font-size: 48px; margin-bottom: 8px; }
+  h1 { font-size: 22px; color: #333; margin-bottom: 4px; }
+  .subtitle { color: #999; font-size: 14px; margin-bottom: 32px; }
+  .input-group { position: relative; margin-bottom: 20px; }
+  .input-group input {
+    width: 100%; padding: 16px 20px; border: 2px solid #e0e0e0;
+    border-radius: 16px; font-size: 16px; outline: none; transition: border-color 0.3s;
+  }
+  .input-group input:focus { border-color: #7c4dff; }
+  .input-group input::placeholder { color: #bbb; }
+  .btn {
+    width: 100%; padding: 16px; background: linear-gradient(135deg, #7c4dff, #448aff);
+    color: #fff; border: none; border-radius: 16px; font-size: 17px;
+    font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(124,77,255,0.35); }
+  .btn:active { transform: translateY(0); }
+  .result { display: none; margin-top: 28px; animation: fadeIn 0.5s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  .order-info { background: #f5f5f5; border-radius: 12px; padding: 14px; margin-bottom: 20px; }
+  .order-info p { font-size: 14px; color: #666; margin: 4px 0; }
+  .order-info .order-id { font-weight: 600; color: #333; font-size: 15px; }
+  .doll-card { border-radius: 16px; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.08); background: #fafafa; }
+  .doll-img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+  .doll-name { padding: 16px; font-size: 18px; font-weight: 600; color: #333; }
+  .error-msg { display: none; margin-top: 16px; padding: 12px 16px; background: #ffebee; color: #c62828; border-radius: 12px; font-size: 14px; }
+  .cuddle-btn { margin-top: 16px; background: linear-gradient(135deg, #ff6f91, #ff9a9e); }
+  .qr-section { margin-top: 32px; padding-top: 24px; border-top: 1px dashed #e0e0e0; }
+  .qr-section h3 { font-size: 14px; color: #666; margin-bottom: 12px; }
+  .qr-code { width: 200px; height: 200px; margin: 0 auto; display: block; image-rendering: pixelated; }
+  .share-tip { font-size: 12px; color: #999; margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="logo">🧸</div>
+  <h1>玩偶订单查询</h1>
+  <p class="subtitle">输入订单号，查看你的专属玩偶</p>
+
+  <div class="input-group">
+    <input type="text" id="orderInput" placeholder="请输入订单号，如：ORD001" autocomplete="off">
+  </div>
+  <button class="btn" id="queryBtn" onclick="queryOrder()">查 询</button>
+
+  <div class="error-msg" id="errorMsg"></div>
+
+  <div class="result" id="result">
+    <div class="order-info" id="orderInfo"></div>
+    <div class="doll-card">
+      <img class="doll-img" id="dollImg" src="" alt="玩偶图片">
+      <div class="doll-name" id="dollName"></div>
+    </div>
+    <button class="btn cuddle-btn" onclick="cuddle()">🤗 云端抱抱</button>
+  </div>
+
+  <div class="qr-section">
+    <h3> 扫码访问此页面</h3>
+    <img class="qr-code" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAFKCAIAAAD0S4FSAAAGKklEQVR4nO3dQW5bORBAwfFgjuT7n8B3UrZZBEQyNNP8T1VbQ/a3pAduGs2P1+v1D1D07/QDAKfIG7LkDVnyhix5Q5a8IUvekCVvyJI3ZMkbsuQNWfKGLHlDlrwhS96QJW/IkjdkyRuy5A1Z/+28+PPz87ue4xJfX1+Ln577f6f+7o6dZ16/dsed79WOnffK6Q1Z8oYseUOWvCFL3pAlb8iSN2TJG7LkDVlbU2tr5yaTdjxxqmnqndx5r+6caXu376TTG7LkDVnyhix5Q5a8IUvekCVvyJI3ZMkbsg5Ora1N7S07Z2dO64mbyc7NtE3pfSed3pAlb8iSN2TJG7LkDVnyhix5Q5a8IUvekCVvyBo6tTY1t7RzduZ0bup7O5N7y7tN7p04vSFL3pAlb8iSN2TJG7LkDVnyhix5Q5a8IUvekPXxer3GJ4SmJrdO7W07N3E2NbX3xM1k52Zap/ROnN6QJW/IkjdkyRuy5A1Z8oYseUOWvCFL3pB1cGpt7dwE1p2zVnde05Q7O29k6u9y58TbG7LkDVnyhix5Q5a8IUvekCVvyJI3ZMkbsj5er9f41MTUJta5Cawd56a8pp45984NcDs+8Ys7vSFL3pAlb8iSN2TJG7LkDVnyhix5Q5a8IWtrau3O/VU7N2dN6Ymbyc7N0k1N6Z04vSFL3pAlb8iSN2TJG7LkDVnyhix5Q5a8IWtrau3O/Vo7N9N+52avqcm6J24mOzfTNjWld+L0hix5Q5a8IUvekCVvyJI3ZMkbsuQNWfKGrIN3rZ2b8XpixutOd05vPbGZ7ImfyekNWfKGLHlDlrwhS96QJW/IkjdkyRuy5A1ZW1Nrd9o5SXXnJtYpU9vX7nxP7pytW5v6u5zekCVvyJI3ZMkbsuQNWfKGLHlDlrwhS96QdXDX2tpO5yaT7pyfmjJ1y+TO37zjznt175x6c3pDlrwhS96QJW/IkjdkyRuy5A1Z8oYseUPW2NTa2p1TU0/MHk1N6Z2b8drR+e6c2kx25+ey485v7JQ7vytT7vzGT7nzOz/1zvfq9IYseUOWvCFL3pAlb8iSN2TJG7LkDVnyhqytqTV5o52b03ZMTZlN3V165zO/8wPZMfU72XHnt27Knd8GpzdkyRuy5A1Z8oYseUOWvCFL3pAlb8iSN2R9vF6v/47yTnq3bWbH1N2550xNpO2YukX3zkm1u97nOe6880479955J6c3ZMkbsuQNWfKGLHlDlrwhS96QJW/IkjdkbU2tTc2HvXNq6c77Jc/N0k1tJrtz9ujd+Zt3Tqm989079c6935g7v7F3vlfvzJL35MyG+3R6Q5a8IUvekCVvyJI3ZMkbsuQNWfKGLHlD1lZv19o5O6fE1p74Z3fuLXvndNidG9/Wnpg9u3ND2NQ7N/V3nXri3d/xhKl/1xOnN2TJG7LkDVnyhix5Q5a8IUvekCVvyJI3ZB2cWnviBq+d+6um7Hx3p2bP7pxd2vHOL37O6Q1Z8oYseUOWvCFL3pAlb8iSN2TJG7LkDVkfr9dr+hmAI5zekCVvyJI3ZMkbsuQNWfKGLHlDlrwhS96QJW/IkjdkyRuy5A1Z8oYseUOWvCFL3pAlb8iSN2T9AJfZqexV4qWAAAAAAElFTkSuQmCC" alt="二维码">
+    <p class="share-tip">扫描二维码，立即访问（无需警告页）</p>
+  </div>
+</div>
+
+<script>
+const orderDB = {
+  "ORD001": { doll: "棕色小熊", emoji: "🧸", color1: "#c8956c", color2: "#8b5e3c", date: "2026-05-20", status: "已发货" },
+  "ORD002": { doll: "粉色小兔", emoji: "🐰", color1: "#f8a5c2", color2: "#e5709c", date: "2026-05-22", status: "配送中" },
+  "ORD003": { doll: "蓝色海豚", emoji: "🐬", color1: "#7ec8e3", color2: "#3a86a8", date: "2026-05-25", status: "已发货" },
+  "ORD004": { doll: "白色猫咪", emoji: "🐱", color1: "#f0f0f0", color2: "#c9c9c9", date: "2026-05-26", status: "准备发货" },
+  "ORD005": { doll: "绿色恐龙", emoji: "🦕", color1: "#78c77b", color2: "#3d8b3f", date: "2026-05-27", status: "已发货" },
+};
+
+function queryOrder() {
+  const orderId = document.getElementById('orderInput').value.trim().toUpperCase();
+  const errorMsg = document.getElementById('errorMsg');
+  const result = document.getElementById('result');
+  errorMsg.style.display = 'none';
+  result.style.display = 'none';
+
+  if (!orderId) { showError('请输入订单号'); return; }
+  const order = orderDB[orderId];
+  if (!order) { showError('未找到订单 "' + orderId + '"，请检查后重试'); return; }
+
+  const svg = generateDollSVG(order);
+  document.getElementById('dollImg').src = 'data:image/svg+xml,' + encodeURIComponent(svg);
+  document.getElementById('dollName').textContent = order.emoji + ' ' + order.doll;
+  document.getElementById('orderInfo').innerHTML = '<p class="order-id">订单号：' + orderId + '</p><p>下单日期：' + order.date + ' ｜ 状态：' + order.status + '</p>';
+  result.style.display = 'block';
+}
+
+function generateDollSVG(order) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+    <defs><radialGradient id="bg" cx="50%" cy="45%" r="55%"><stop offset="0%" stop-color="${order.color1}"/><stop offset="100%" stop-color="${order.color2}"/></radialGradient>
+    <radialGradient id="body" cx="48%" cy="42%" r="50%"><stop offset="0%" stop-color="#fff" stop-opacity="0.3"/><stop offset="100%" stop-color="#000" stop-opacity="0.08"/></radialGradient></defs>
+    <rect width="400" height="400" fill="url(#bg)"/>
+    <circle cx="60" cy="60" r="18" fill="#fff" opacity="0.15"/><circle cx="340" cy="80" r="12" fill="#fff" opacity="0.12"/>
+    <circle cx="320" cy="330" r="22" fill="#fff" opacity="0.1"/><circle cx="70" cy="340" r="14" fill="#fff" opacity="0.13"/>
+    <ellipse cx="200" cy="260" rx="90" ry="100" fill="${order.color1}" opacity="0.9"/>
+    <ellipse cx="200" cy="260" rx="90" ry="100" fill="url(#body)"/>
+    <circle cx="200" cy="150" r="75" fill="${order.color1}"/>
+    <ellipse cx="148" cy="95" rx="22" ry="32" fill="${order.color1}" transform="rotate(-15,148,95)"/>
+    <ellipse cx="252" cy="95" rx="22" ry="32" fill="${order.color1}" transform="rotate(15,252,95)"/>
+    <ellipse cx="148" cy="95" rx="12" ry="20" fill="${order.color2}" opacity="0.4" transform="rotate(-15,148,95)"/>
+    <ellipse cx="252" cy="95" rx="12" ry="20" fill="${order.color2}" opacity="0.4" transform="rotate(15,252,95)"/>
+    <ellipse cx="175" cy="145" rx="10" ry="12" fill="#333"/><ellipse cx="225" cy="145" rx="10" ry="12" fill="#333"/>
+    <ellipse cx="178" cy="141" rx="4" ry="5" fill="#fff"/><ellipse cx="228" cy="141" rx="4" ry="5" fill="#fff"/>
+    <ellipse cx="200" cy="162" rx="7" ry="5" fill="${order.color2}"/>
+    <path d="M190 170 Q200 180 210 170" stroke="${order.color2}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <circle cx="155" cy="165" r="12" fill="#ffb3c6" opacity="0.4"/><circle cx="245" cy="165" r="12" fill="#ffb3c6" opacity="0.4"/>
+    <ellipse cx="118" cy="240" rx="22" ry="40" fill="${order.color1}" transform="rotate(15,118,240)"/>
+    <ellipse cx="282" cy="240" rx="22" ry="40" fill="${order.color1}" transform="rotate(-15,282,240)"/>
+    <ellipse cx="168" cy="345" rx="30" ry="18" fill="${order.color1}"/><ellipse cx="232" cy="345" rx="30" ry="18" fill="${order.color1}"/>
+    <circle cx="200" cy="198" r="5" fill="#ff6b8a"/>
+    <ellipse cx="188" cy="198" rx="12" ry="8" fill="#ff6b8a" transform="rotate(-10,188,198)"/>
+    <ellipse cx="212" cy="198" rx="12" ry="8" fill="#ff6b8a" transform="rotate(10,212,198)"/>
+    <text x="200" y="390" text-anchor="middle" font-size="28" opacity="0.2">${order.emoji}</text>
+  </svg>`;
+}
+
+function showError(msg) { const el = document.getElementById('errorMsg'); el.textContent = msg; el.style.display = 'block'; }
+function cuddle() {
+  const btn = document.querySelector('.cuddle-btn');
+  btn.textContent = '🤗 (づ｡◕‿‿◕｡)づ 已收到你的抱抱!';
+  btn.style.background = 'linear-gradient(135deg, #a18cd1, #fbc2eb)';
+  setTimeout(() => { btn.textContent = '🤗 云端抱抱'; btn.style.background = 'linear-gradient(135deg, #ff6f91, #ff9a9e)'; }, 2000);
+}
+document.getElementById('orderInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') queryOrder(); });
+</script>
+</body>
+</html>
