@@ -62,14 +62,11 @@
   <div class="logo">🧸</div>
   <h1>玩偶订单查询</h1>
   <p class="subtitle">输入订单号，查看你的专属玩偶</p>
-
   <div class="input-group">
     <input type="text" id="orderInput" placeholder="请输入订单号，如：ORD001" autocomplete="off">
   </div>
-  <button class="btn" id="queryBtn" onclick="queryOrder()">查 询</button>
-
+  <button class="btn" id="queryBtn" onclick="queryOrder()">查询</button>
   <div class="error-msg" id="errorMsg"></div>
-
   <div class="result" id="result">
     <div class="order-info" id="orderInfo"></div>
     <div class="doll-card">
@@ -78,14 +75,12 @@
     </div>
     <button class="btn cuddle-btn" onclick="cuddle()">🤗 云端抱抱</button>
   </div>
-
   <div class="qr-section">
     <h3>📱 扫码访问此页面</h3>
-    <img class="qr-code" src="data:image/png;base64,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" alt="二维码">
-    <p class="share-tip">扫描二维码，立即访问（无需警告页）</p>
+    <img class="qr-code" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAAFKAQAAAABTUiuoAAACSklEQVR4nO2bTYrjMBBGX7UMvZShD5Cj2Ddr+mb2UXIDexmQ+WZRluMemCEzkLQWVYsg229R8FE/KikmHrT57VESAg000DdYbbdxNWPuN1+ZWUf91DXia6AkSZKAJPu8vntylBZgkOSrNnwNFPboyQV9XW4GWWLuwSNvfLoDgT5k3flh/ShGBmYDDcvHCxwI9H/RXGBY9gezS3m1A4H+3Ty27m28ZkuyYQJj7QpkAevzHAj0H9HN+z5YO+xzAVi7PcpmMzPrn+tAoA9at0cPACuIFTT3GHAOugZ8DfTNI8r6zcwuxauVjQDkgo1sxhz7rTZQpCVJUy5oAt9gMSzJt1/4bmxJ0vTjvgaKb4xdniz/cXm+fwi1GkCRVI6V9jo1LKlOMCK2GkJdLU0eVoduC3XopLKvQq0m0LUD2KzWrYJZn6SvHmwkKbqMVlDPf/ca5VE2qOBjQw86IhM2gVI7ioImz4Tp3BMeCoZaDaCu1j4dzFKtYHu/oQkItVpBayeY92Os0/brFG+hVhvoEVt1Jzz56yMJkhQ9YUNoHWNUoYBBN4N8s5c4EOij1gFbV5XZqjxr70eSdnr3474GeurgPSfuwwv4fRWZsAn0fueJfYxhow90wd95q9GCr4Ge7jyBjUfqG5Zay4ZrzDKaQP2k3yAVnxPOFwHcy1gqBqkFXwP9hq5mDMtmzPYufV0Kmtgs7hM2jCYx6Gb2ee2ALNn4WgcC/aOdTx51THBP7WBMntpCz3aedo1ywayvk45nOxDog2bxj6BAA30K+gvPKJ1v+EDb8AAAAABJRU5ErkJggg==" alt="二维码">
+    <p class="share-tip">扫描二维码，立即访问</p>
   </div>
 </div>
-
 <script>
 const orderDB = {
   "ORD001": { doll: "棕色小熊", emoji: "🧸", color1: "#c8956c", color2: "#8b5e3c", date: "2026-05-20", status: "已发货" },
@@ -94,25 +89,21 @@ const orderDB = {
   "ORD004": { doll: "白色猫咪", emoji: "🐱", color1: "#f0f0f0", color2: "#c9c9c9", date: "2026-05-26", status: "准备发货" },
   "ORD005": { doll: "绿色恐龙", emoji: "🦕", color1: "#78c77b", color2: "#3d8b3f", date: "2026-05-27", status: "已发货" },
 };
-
 function queryOrder() {
   const orderId = document.getElementById('orderInput').value.trim().toUpperCase();
   const errorMsg = document.getElementById('errorMsg');
   const result = document.getElementById('result');
   errorMsg.style.display = 'none';
   result.style.display = 'none';
-
   if (!orderId) { showError('请输入订单号'); return; }
   const order = orderDB[orderId];
   if (!order) { showError('未找到订单 "' + orderId + '"，请检查后重试'); return; }
-
   const svg = generateDollSVG(order);
   document.getElementById('dollImg').src = 'data:image/svg+xml,' + encodeURIComponent(svg);
   document.getElementById('dollName').textContent = order.emoji + ' ' + order.doll;
   document.getElementById('orderInfo').innerHTML = '<p class="order-id">订单号：' + orderId + '</p><p>下单日期：' + order.date + ' ｜ 状态：' + order.status + '</p>';
   result.style.display = 'block';
 }
-
 function generateDollSVG(order) {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
     <defs><radialGradient id="bg" cx="50%" cy="45%" r="55%"><stop offset="0%" stop-color="${order.color1}"/><stop offset="100%" stop-color="${order.color2}"/></radialGradient>
@@ -141,11 +132,10 @@ function generateDollSVG(order) {
     <text x="200" y="390" text-anchor="middle" font-size="28" opacity="0.2">${order.emoji}</text>
   </svg>`;
 }
-
 function showError(msg) { const el = document.getElementById('errorMsg'); el.textContent = msg; el.style.display = 'block'; }
 function cuddle() {
   const btn = document.querySelector('.cuddle-btn');
-  btn.textContent = '🤗 (づ｡◕‿‿◕｡) づ 已收到你的抱抱!';
+  btn.textContent = '🤗 (づ｡◕‿‿｡) づ 已收到你的抱抱!';
   btn.style.background = 'linear-gradient(135deg, #a18cd1, #fbc2eb)';
   setTimeout(() => { btn.textContent = '🤗 云端抱抱'; btn.style.background = 'linear-gradient(135deg, #ff6f91, #ff9a9e)'; }, 2000);
 }
